@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-eager-green: #58cc02;
+  --color-eager-green-hover: #4bb302;
+  --color-storybook-green: #d7ffb8;
+  --color-spark-blue: #1cb0f6;
+  --color-fresh-leaf: #a5ed6e;
+  --color-night-ink: #000437;
+  --color-charcoal: #4b4b4b;
+  --color-pencil-gray: #777777;
+  --color-faded-gray: #afafaf;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-eager-green: var(--color-eager-green);
+  --color-eager-green-hover: var(--color-eager-green-hover);
+  --color-storybook-green: var(--color-storybook-green);
+  --color-spark-blue: var(--color-spark-blue);
+  --color-fresh-leaf: var(--color-fresh-leaf);
+  --color-night-ink: var(--color-night-ink);
+  --color-charcoal: var(--color-charcoal);
+  --color-pencil-gray: var(--color-pencil-gray);
+  --color-faded-gray: var(--color-faded-gray);
+  --font-display: var(--font-nunito);
+  --font-sans: var(--font-nunito);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background: #ffffff;
+    color: var(--color-charcoal);
+    font-family: var(--font-sans), "Hiragino Sans", "Yu Gothic", sans-serif;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  a {
+    color: var(--color-spark-blue);
+  }
+  a:hover {
+    color: var(--color-night-ink);
+  }
 }

@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# やりくり献立 — 紹介サイト
 
-## Getting Started
+「やりくり献立」アプリの紹介LP、お問い合わせ、プライバシーポリシーページ。Next.js (App Router) + Tailwind CSS v4。
 
-First, run the development server:
+## セットアップ
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`http://localhost:3000` で確認できます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## お問い合わせフォーム(Resend)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`/contact` の送信は [Resend](https://resend.com) 経由でメール通知します。
 
-## Learn More
+1. resend.com でアカウント作成 → API キーを発行
+2. 送信元ドメイン `hosokawa-lab.dev` を認証する
+   - Resendダッシュボード → **Domains** → **Add Domain** で `hosokawa-lab.dev` を追加
+   - 表示されるDNSレコード(SPF用の`TXT`、DKIM用の`TXT`、任意で`MX`)を、ドメインを管理しているDNS(お名前.com / Cloudflare / Route 53 など)に追加
+   - Resend側で **Verify** を押し、ステータスが緑の「Verified」になれば完了(反映まで数分〜数時間かかることがあります)
+3. `.env.local` に以下を設定
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   RESEND_API_KEY=re_xxxxxxxx
+   RESEND_FROM="やりくり献立 <noreply@hosokawa-lab.dev>"
+   CONTACT_TO_EMAIL=hosokawa.dev@gmail.com
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ドメイン認証が終わるまでの動作確認だけなら、`RESEND_FROM` を一時的に `やりくり献立 <onboarding@resend.dev>` に戻しても送れます(ただしResendアカウント登録メール宛にしか届きません)。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`RESEND_API_KEY` が未設定のときはAPIが500を返し、フォームにエラーメッセージが表示されます(クラッシュはしません)。
 
-## Deploy on Vercel
+## デプロイ(Vercel)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. このリポジトリをGitHubにpush
+2. [vercel.com/new](https://vercel.com/new) でインポート
+3. Project Settings → Environment Variables に `.env.example` と同じキーを設定(`RESEND_API_KEY` / `RESEND_FROM` / `CONTACT_TO_EMAIL`)
+4. Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 構成
+
+```
+app/
+  page.tsx           トップページ(LP)
+  contact/page.tsx   お問い合わせページ
+  privacy/page.tsx   プライバシーポリシー
+  api/contact/route.ts  お問い合わせ送信API(Resend)
+  icon.png           アプリアイコン(favicon / OGアイコンとして自動使用)
+components/
+  site-header.tsx    共通ヘッダー
+  site-footer.tsx    共通フッター
+  contact-form.tsx   お問い合わせフォーム(クライアントコンポーネント)
+```
+
+## 未確定の項目
+
+- お問い合わせ受信先メールアドレス: 現在 `hosokawa.dev@gmail.com`(`.env` の `CONTACT_TO_EMAIL` で変更可)
+- 運営者名: フッター/プライバシーポリシーに「Hosokawa Lab」と仮置き
+- App Storeリンク: まだ未公開のため「近日公開」表示。公開後はボタンのリンク先を実際のApp Store URLに差し替えてください
